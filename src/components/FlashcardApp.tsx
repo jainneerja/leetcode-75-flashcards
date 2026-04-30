@@ -72,7 +72,7 @@ export default function FlashcardApp() {
   const stats = getStats(FLASHCARD_DATA.length);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex overflow-x-hidden">
 
       {/* Mobile overlay */}
       {sidebarOpen && (
@@ -102,32 +102,31 @@ export default function FlashcardApp() {
         <div className="max-w-6xl mx-auto">
 
           {/* Header */}
-          <div className="mb-6 md:mb-8">
-            <div className="flex items-start justify-between mb-4 gap-4">
-              <div className="flex items-start gap-3">
-                {/* Hamburger — mobile only */}
-                <button
-                  className="md:hidden mt-1 p-2 rounded-xl bg-white/10 border border-white/20 text-white flex-shrink-0"
-                  onClick={() => setSidebarOpen(o => !o)}
-                >
-                  {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
-                </button>
-                <div>
-                  <h1 className="text-3xl md:text-4xl font-black text-white mb-1">
-                    LeetCode 75{' '}
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">
-                      Flashcards
-                    </span>
-                  </h1>
-                  <p className="text-gray-400 text-sm">
-                    {filterCategory === 'All' ? 'All patterns' : filterCategory} ·{' '}
-                    <span className="text-purple-300">{filteredCards.length} problems</span>
-                  </p>
-                </div>
+          <div className="mb-6 md:mb-8 flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+            {/* Title + hamburger */}
+            <div className="flex items-start gap-3">
+              <button
+                className="md:hidden mt-1 p-2 rounded-xl bg-white/10 border border-white/20 text-white flex-shrink-0"
+                onClick={() => setSidebarOpen(o => !o)}
+              >
+                {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
+              </button>
+              <div>
+                <h1 className="text-2xl md:text-4xl font-black text-white mb-1 leading-tight">
+                  LeetCode 75{' '}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">
+                    Flashcards
+                  </span>
+                </h1>
+                <p className="text-gray-400 text-xs md:text-sm">
+                  {filterCategory === 'All' ? 'All patterns' : filterCategory} ·{' '}
+                  <span className="text-purple-300">{filteredCards.length} problems</span>
+                </p>
               </div>
-              <div className="w-48 md:w-72 flex-shrink-0">
-                <ProgressTracker stats={stats} onReset={resetProgress} />
-              </div>
+            </div>
+            {/* Progress tracker */}
+            <div className="w-full md:w-72 md:flex-shrink-0">
+              <ProgressTracker stats={stats} onReset={resetProgress} />
             </div>
           </div>
 
