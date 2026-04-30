@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
+import { Menu, X } from 'lucide-react';
 import { FLASHCARD_DATA } from '../data/allCards';
 import { useProgress } from '../hooks/useProgress';
 import type { FlashCard, Category, Difficulty } from '../types/card';
@@ -14,6 +15,7 @@ export default function FlashcardApp() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState<Category | 'All'>('All');
   const [filterDifficulty, setFilterDifficulty] = useState<Difficulty | 'All'>('All');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const { progress, setCardStatus, resetProgress, getStats } = useProgress();
 
@@ -62,36 +64,68 @@ export default function FlashcardApp() {
     }
   }
 
+  function handleCategoryChange(cat: Category | 'All') {
+    setFilterCategory(cat);
+    setSidebarOpen(false);
+  }
+
   const stats = getStats(FLASHCARD_DATA.length);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex">
+
+      {/* Mobile overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/60 z-20 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <div className="w-60 flex-shrink-0 bg-black/20 backdrop-blur border-r border-white/10 fixed left-0 top-0 h-full overflow-hidden z-10">
+      <div className={`
+        fixed left-0 top-0 h-full w-60 bg-black/30 backdrop-blur border-r border-white/10 z-30
+        transition-transform duration-300
+        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+        md:translate-x-0
+      `}>
         <CategorySidebar
           activeCategory={filterCategory}
-          onCategoryChange={setFilterCategory}
+          onCategoryChange={handleCategoryChange}
           allCards={FLASHCARD_DATA}
           progress={progress}
         />
       </div>
 
       {/* Main content */}
-      <div className="flex-1 ml-60 p-8">
+      <div className="flex-1 md:ml-60 p-4 md:p-8">
         <div className="max-w-6xl mx-auto">
+
           {/* Header */}
-          <div className="mb-8">
-            <div className="flex items-start justify-between mb-4">
-              <div>
-                <h1 className="text-4xl font-black text-white mb-1">
-                  LeetCode 75 <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">Flashcards</span>
-                </h1>
-                <p className="text-gray-400 text-sm">
-                  {filterCategory === 'All' ? 'All patterns' : filterCategory} ·{' '}
-                  <span className="text-purple-300">{filteredCards.length} problems</span>
-                </p>
+          <div className="mb-6 md:mb-8">
+            <div className="flex items-start justify-between mb-4 gap-4">
+              <div className="flex items-start gap-3">
+                {/* Hamburger — mobile only */}
+                <button
+                  className="md:hidden mt-1 p-2 rounded-xl bg-white/10 border border-white/20 text-white flex-shrink-0"
+                  onClick={() => setSidebarOpen(o => !o)}
+                >
+                  {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
+                </button>
+                <div>
+                  <h1 className="text-3xl md:text-4xl font-black text-white mb-1">
+                    LeetCode 75{' '}
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">
+                      Flashcards
+                    </span>
+                  </h1>
+                  <p className="text-gray-400 text-sm">
+                    {filterCategory === 'All' ? 'All patterns' : filterCategory} ·{' '}
+                    <span className="text-purple-300">{filteredCards.length} problems</span>
+                  </p>
+                </div>
               </div>
-              <div className="w-72">
+              <div className="w-48 md:w-72 flex-shrink-0">
                 <ProgressTracker stats={stats} onReset={resetProgress} />
               </div>
             </div>
@@ -120,7 +154,7 @@ export default function FlashcardApp() {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
               {filteredCards.map(card => (
                 <CardThumbnail
                   key={card.id}

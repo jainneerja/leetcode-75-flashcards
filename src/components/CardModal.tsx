@@ -56,11 +56,11 @@ export default function CardModal({
           <X size={28} />
         </button>
 
-        {/* Nav arrows */}
+        {/* Nav arrows — outside card on desktop, inside corners on mobile */}
         {hasPrev && (
           <button
             onClick={onPrev}
-            className="absolute left-0 top-1/2 -translate-x-14 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white rounded-full p-2 transition-all border border-white/20"
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 md:-translate-x-14 bg-white/10 hover:bg-white/20 text-white rounded-full p-2 transition-all border border-white/20 z-10"
           >
             <ChevronLeft size={24} />
           </button>
@@ -68,7 +68,7 @@ export default function CardModal({
         {hasNext && (
           <button
             onClick={onNext}
-            className="absolute right-0 top-1/2 translate-x-14 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white rounded-full p-2 transition-all border border-white/20"
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 md:translate-x-14 bg-white/10 hover:bg-white/20 text-white rounded-full p-2 transition-all border border-white/20 z-10"
           >
             <ChevronRight size={24} />
           </button>

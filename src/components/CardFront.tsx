@@ -1,6 +1,7 @@
 import React from 'react';
 import type { FlashCard } from '../types/card';
 import VizRenderer from './VizRenderer';
+import { VizErrorBoundary } from './VizErrorBoundary';
 
 const DIFFICULTY_STYLES = {
   Easy: 'bg-green-100 text-green-800',
@@ -42,7 +43,9 @@ export default function CardFront({ card }: Props) {
 
       {/* Visualization */}
       <div className="mb-5">
-        <VizRenderer card={card} />
+        <VizErrorBoundary>
+          <VizRenderer card={card} />
+        </VizErrorBoundary>
       </div>
 
       {/* Tags */}
