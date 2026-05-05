@@ -99,7 +99,7 @@ export default function FlashcardApp() {
 
       {/* Main content */}
       <div className="flex-1 md:ml-60 p-4 md:p-8">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-[1600px] mx-auto">
 
           {/* Header */}
           <div className="mb-6 md:mb-8 flex flex-col md:flex-row md:items-start md:justify-between gap-4">
@@ -153,7 +153,7 @@ export default function FlashcardApp() {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-5">
               {filteredCards.map(card => (
                 <CardThumbnail
                   key={card.id}

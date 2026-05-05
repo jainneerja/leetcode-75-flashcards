@@ -27,30 +27,49 @@ body {
   background: rgba(168, 85, 247, 0.7);
 }
 
-/* Card flip animation */
+/* Card flip animation — no preserve-3d so iOS scroll works */
 .card-flip-container {
-  perspective: 1000px;
-}
-
-.card-inner {
-  transition: transform 0.65s cubic-bezier(0.4, 0.2, 0.2, 1);
-  transform-style: preserve-3d;
   position: relative;
 }
 
-.card-inner.flipped {
-  transform: rotateY(180deg);
+.card-inner {
+  position: relative;
 }
 
-.card-face {
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  -webkit-overflow-scrolling: touch;
+/* Front face folds away first */
+.card-face-front {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  transform: rotateY(0deg);
+  opacity: 1;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
-.card-back-face {
-  transform: rotateY(180deg);
+.card-inner.flipped .card-face-front {
+  transform: rotateY(90deg);
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  top: 0; left: 0; right: 0;
+}
+
+/* Back face unfolds in after front is gone */
+.card-face-back {
+  transition: transform 0.3s ease 0.25s, opacity 0.3s ease 0.25s;
+  transform: rotateY(-90deg);
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.card-inner.flipped .card-face-back {
+  transform: rotateY(0deg);
+  opacity: 1;
+  pointer-events: auto;
+  position: relative;
 }
 
 /* Code block */

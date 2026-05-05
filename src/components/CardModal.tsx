@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, CheckCircle, RefreshCw, Circle } from 'lucide-react';
 import type { FlashCard, ProgressStatus } from '../types/card';
 import CardFront from './CardFront';
 import CardBack from './CardBack';
@@ -17,10 +17,28 @@ interface Props {
   hasNext: boolean;
 }
 
-const STATUS_BUTTONS: { status: ProgressStatus; label: string; emoji: string; style: string }[] = [
-  { status: 'known', label: 'Known', emoji: '✅', style: 'bg-green-500/20 border-green-500/50 text-green-400 hover:bg-green-500/30' },
-  { status: 'review', label: 'Review', emoji: '🔄', style: 'bg-yellow-500/20 border-yellow-500/50 text-yellow-400 hover:bg-yellow-500/30' },
-  { status: 'unseen', label: 'Unseen', emoji: '⬜', style: 'bg-white/10 border-white/20 text-gray-400 hover:bg-white/15' },
+const STATUS_BUTTONS: { status: ProgressStatus; label: string; icon: React.ReactNode; style: string; activeStyle: string }[] = [
+  {
+    status: 'known',
+    label: 'Known',
+    icon: <CheckCircle size={15} />,
+    style: 'bg-green-500/20 border-green-500/50 text-green-400 hover:bg-green-500/30',
+    activeStyle: 'bg-green-500 border-green-400 text-white',
+  },
+  {
+    status: 'review',
+    label: 'Review',
+    icon: <RefreshCw size={15} />,
+    style: 'bg-yellow-500/20 border-yellow-500/50 text-yellow-400 hover:bg-yellow-500/30',
+    activeStyle: 'bg-yellow-500 border-yellow-400 text-white',
+  },
+  {
+    status: 'unseen',
+    label: 'Unseen',
+    icon: <Circle size={15} />,
+    style: 'bg-white/10 border-white/20 text-gray-400 hover:bg-white/15',
+    activeStyle: 'bg-white/20 border-white/40 text-white',
+  },
 ];
 
 export default function CardModal({
@@ -45,7 +63,7 @@ export default function CardModal({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-4xl relative"
+        className="w-full max-w-3xl relative"
         onClick={e => e.stopPropagation()}
       >
         {/* Close */}
@@ -56,7 +74,7 @@ export default function CardModal({
           <X size={28} />
         </button>
 
-        {/* Nav arrows — outside card on desktop, inside corners on mobile */}
+        {/* Nav arrows */}
         {hasPrev && (
           <button
             onClick={onPrev}
@@ -76,18 +94,20 @@ export default function CardModal({
 
         {/* Card flip container */}
         <div className="card-flip-container">
-          <div
-            className={`card-inner ${isFlipped ? 'flipped' : ''}`}
-            onClick={onFlip}
-            style={{ cursor: 'pointer' }}
-          >
+          <div className={`card-inner ${isFlipped ? 'flipped' : ''}`}>
             {/* Front */}
-            <div className="card-face bg-white rounded-2xl shadow-2xl p-8 overflow-y-auto max-h-[80vh]">
+            <div
+              className="card-face-front bg-white rounded-2xl shadow-2xl p-6 md:p-8 max-h-[75vh]"
+              onClick={onFlip}
+              style={{ cursor: 'pointer' }}
+            >
               <CardFront card={card} />
             </div>
             {/* Back */}
-            <div className="card-face card-back-face bg-gradient-to-br from-purple-700 via-purple-800 to-blue-900 rounded-2xl shadow-2xl p-8 overflow-y-auto max-h-[80vh]"
-              style={{ position: 'absolute', top: 0, left: 0, right: 0 }}
+            <div
+              className="card-face-back bg-gradient-to-br from-purple-700 via-purple-800 to-blue-900 rounded-2xl shadow-2xl p-6 md:p-8 max-h-[75vh]"
+              onClick={onFlip}
+              style={{ cursor: 'pointer' }}
             >
               <CardBack card={card} />
             </div>
@@ -95,22 +115,27 @@ export default function CardModal({
         </div>
 
         {/* Progress controls */}
-        <div className="mt-4 flex items-center justify-center gap-3">
-          <span className="text-gray-400 text-xs">Mark as:</span>
-          {STATUS_BUTTONS.map(btn => (
-            <button
-              key={btn.status}
-              onClick={e => { e.stopPropagation(); onStatusChange(btn.status); }}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl border text-xs font-semibold transition-all ${btn.style} ${progressStatus === btn.status ? 'ring-2 ring-offset-1 ring-offset-transparent ring-current scale-105' : ''}`}
-            >
-              <span>{btn.emoji}</span>
-              {btn.label}
-            </button>
-          ))}
+        <div className="mt-4 flex items-center justify-center gap-2 flex-wrap">
+          <span className="text-gray-400 text-xs w-full text-center sm:w-auto">Mark as:</span>
+          {STATUS_BUTTONS.map(btn => {
+            const isActive = progressStatus === btn.status;
+            return (
+              <button
+                key={btn.status}
+                onClick={e => { e.stopPropagation(); onStatusChange(btn.status); }}
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-xl border text-xs font-semibold transition-all ${
+                  isActive ? btn.activeStyle : btn.style
+                } ${isActive ? 'scale-105 shadow-lg' : ''}`}
+              >
+                {btn.icon}
+                {btn.label}
+              </button>
+            );
+          })}
         </div>
 
-        {/* Keyboard hint */}
-        <p className="text-center text-gray-600 text-xs mt-2">
+        {/* Keyboard hint — desktop only */}
+        <p className="hidden md:block text-center text-gray-600 text-xs mt-2">
           Space to flip · Esc to close · ← → to navigate
         </p>
       </div>
